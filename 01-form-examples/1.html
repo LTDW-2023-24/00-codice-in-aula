@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            font-family: 'Franklin Gothic Medium', Arial, sans-serif;
+            font-size: 0.9em;
+            color: gray;
+        }
+        div {
+            margin-bottom: 6px;
+        }
+
+        input[type="text"], textarea {
+            padding: 3px 6px 3px 6px;
+            border: 1px solid gray;
+            border-radius: 3px;
+        }
+
+    </style>
+</head>
+<body>
+    <form id="ff" action="script.php" method="post">
+        <div>
+            <label for="name">
+                Name
+            </label>
+            <input type="text" id="name" name="name" />
+        </div>
+        <div>
+            <label for="email">
+                E-mail
+            </label>
+            <input type="email" id="email" name="email" />
+        </div>
+        <div>
+            <label for="message">
+                Message
+            </label>
+            <textarea name="message" id="message"></textarea>
+        </div>
+        <div>
+            <label for="message">
+                Terms and Conditions
+            </label>
+            <input type="checkbox" name="terms" id="terms">
+        </div>
+        <div>
+            <button type="submit">Invia</button>
+        </div>
+
+    </form>
+</body>
+</html>
