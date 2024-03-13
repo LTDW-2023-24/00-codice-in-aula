@@ -43,6 +43,15 @@
             padding: 3px 6px 3px 6px;
             border: 1px solid #5E565A;
             border-radius: 3px;
+            width: 200px;
+        }
+
+        input[type="text"].small, input[type="email"].small {
+            width: 150px;
+        }
+        
+        input[type="text"].large, input[type="email"].large {
+            width: 250px;
         }
 
         form div button[type="submit"] {
@@ -56,6 +65,13 @@
             width: 15%;
             height: 1.5em;
             font-weight: normal;
+        }
+
+        form div button[type="submit"]:hover {
+            background-color: aliceblue;
+        }
+        form div button[type="submit"]:active {
+            background-color: blue;
         }
 
         form div.control {
@@ -76,7 +92,7 @@
 
     <form id="ff" action="script.php" method="post">
         <div>
-            <label for="name">
+            <label for="name" >
                 Name
             </label>
             <input type="text" id="name" name="name" />
@@ -85,7 +101,7 @@
             <label for="email">
                 E-mail
             </label>
-            <input type="email" id="email" name="email" />
+            <input type="email" id="email" name="email"  class="large" />
         </div>
         <div>
             <label for="message">
