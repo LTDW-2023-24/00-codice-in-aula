@@ -11,8 +11,18 @@
             font-size: 0.9em;
             color: gray;
         }
+
         div {
+            margin-bottom: 30px; 
+        }
+
+        form div {
             margin-bottom: 6px;
+            border: none;
+        }
+
+        .border {
+            border: 1px solid red;
         }
 
         input[type="text"], textarea {
@@ -24,6 +34,11 @@
     </style>
 </head>
 <body>
+
+    <div>Esempio di Form</div>
+    <div class="border">Semplice form per mostrare l'uso dei tag relativi</div>
+
+
     <form id="ff" action="script.php" method="post">
         <div>
             <label for="name">
@@ -31,7 +46,7 @@
             </label>
             <input type="text" id="name" name="name" />
         </div>
-        <div>
+        <div class="border">
             <label for="email">
                 E-mail
             </label>
@@ -44,7 +59,7 @@
             <textarea name="message" id="message"></textarea>
         </div>
         <div>
-            <label for="message">
+            <label for="message" class="border">
                 Terms and Conditions
             </label>
             <input type="checkbox" name="terms" id="terms">
