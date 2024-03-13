@@ -10,17 +10,18 @@
         </style>
         <script>
             function check(){
-                alert('Booo!');
+               var obj = document.getElementById('data_di_nascita');
+               alert(obj.value);
             }
         </script>
     </head>
 <body>
     <form> 
-        <label for="choose" onClick="check();">
+        <label for="choose"">
             Inserisci una data
         </label> 
-    <input id="choose" name="i-like" pattern="[0-9][0-9]-[0-9][0-9]-[1-9][09][0-9][0-9]" required /> 
-    <button>Submit</button> 
+    <input id="data_di_nascita" name="data" pattern="[0-9][0-9]-[0-9][0-9]-[1-9][09][0-9][0-9]" required /> 
+    <button onClick="check();">Submit</button> 
     </form>
 </body>
 </html>
