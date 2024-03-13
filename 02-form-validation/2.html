@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <style>
+            input:valid {
+                border: 1px solid green;
+            }
+            input:invalid {
+                border: 1px solid red;
+            }
+        </style>
+        <script>
+            function check(){
+                alert('Booo!');
+            }
+        </script>
+    </head>
+<body>
+    <form> 
+        <label for="choose" onClick="check();">
+            Inserisci una data
+        </label> 
+    <input id="choose" name="i-like" pattern="[0-9][0-9]-[0-9][0-9]-[1-9][09][0-9][0-9]" required /> 
+    <button>Submit</button> 
+    </form>
+</body>
+</html>
