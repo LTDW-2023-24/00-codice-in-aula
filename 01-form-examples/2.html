@@ -21,13 +21,6 @@
             border: none;
         }
 
-        label.border {
-            border: 1px solid red;
-        }
-
-        div.border {
-            border: 1px solid green;
-        }
 
         input[type="text"], textarea {
             padding: 3px 6px 3px 6px;
@@ -35,22 +28,29 @@
             border-radius: 3px;
         }
 
+        form.special {
+            border: 1px solid red;
+        }
+
+        form.special input {
+            border: 1px solid darkblue;
+        }
+
     </style>
 </head>
 <body>
 
-    <div>Esempio di Form</div>
-    <div class="border">Semplice form per mostrare l'uso dei tag relativi</div>
+    <h1>Esempio 1</h1>
+    
 
-
-    <form id="ff" action="script.php" method="post">
+    <form action="script.php" method="post">
         <div>
             <label for="name">
                 Name
             </label>
             <input type="text" id="name" name="name" />
         </div>
-        <div class="border">
+        <div>
             <label for="email">
                 E-mail
             </label>
@@ -63,7 +63,41 @@
             <textarea name="message" id="message"></textarea>
         </div>
         <div>
-            <label for="message" class="border">
+            <label for="message">
+                Terms and Conditions
+            </label>
+            <input type="checkbox" name="terms" id="terms">
+        </div>
+        <div>
+            <button type="submit">Invia</button>
+        </div>
+
+    </form>
+
+    <h1>Esempio 2</h1>
+    
+
+    <form action="script.php" method="post" class="special">
+        <div>
+            <label for="name">
+                Name
+            </label>
+            <input type="text" id="name" name="name" />
+        </div>
+        <div>
+            <label for="email">
+                E-mail
+            </label>
+            <input type="email" id="email" name="email" />
+        </div>
+        <div>
+            <label for="message">
+                Message
+            </label>
+            <textarea name="message" id="message"></textarea>
+        </div>
+        <div>
+            <label for="message">
                 Terms and Conditions
             </label>
             <input type="checkbox" name="terms" id="terms">
