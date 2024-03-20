@@ -1,20 +1,21 @@
 <html>
     <head>
         <script>
-            function checkpassword(obj) {
-                var form= obj.form;
+            function checkpassword() {
+                var form = document.getElementById('myForm');
+
                 if (form.pass1.value != form.pass2.value) {
-                    alert('le password non corrispondono!');
+                    alert('le password non coincidono!');
                 }
             }
         </script>
 
     </head>
     <body>
-        <form name="myForm">
+        <form id="myForm" name="myForm">
              password <input type="password" name="pass1" /><br />
             conferma password <input type="password" name="pass2" /><br />
-            <button onClick="checkpassword(this)">Salva</button>
+            <button onClick="checkpassword()">Salva</button>
 
         </form>
     </body>
