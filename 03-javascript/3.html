@@ -1,9 +1,8 @@
 <html>
     <head>
         <script>
-            function checkpassword() {
-                var form = document.getElementById('myForm');
-
+            function checkpassword(e) {
+                var form = (e.target.form); // e event object
                 if (form.pass1.value != form.pass2.value) {
                     alert('le password non coincidono!');
                 }
@@ -15,7 +14,7 @@
         <form id="myForm" name="myForm">
              password <input type="password" name="pass1" /><br />
             conferma password <input type="password" name="pass2" /><br />
-            <button onClick="checkpassword()">Salva</button>
+            <button onClick="checkpassword(event)">Salva</button>
 
         </form>
     </body>
