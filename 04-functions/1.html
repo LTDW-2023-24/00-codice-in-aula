@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <script>
+            var a = 1000,
+                b = 2000;
+
+            function test() {
+                multipars();
+                multipars(10);
+                multipars(a,b);
+            }
+
+            function multipars() {
+                alert(arguments.length);
+                alert(arguments[1]);
+            }
+        </script>
+    </head>
+    <body>
+        <button onclick="test();">Go!</button>
+    </body>
+</html>
