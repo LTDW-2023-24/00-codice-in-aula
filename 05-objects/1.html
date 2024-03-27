@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <script>
+            var myObj = new Object(),
+                str = "myString",
+                rand = Math.random(),
+                obj = new Object();
+
+            myObj.type = "dot syntax";
+            myObj["date created"] = "string with space";
+            myObj[str] = "string value";
+            myObj[rand] = "random number";
+            myObj[obj] = "object";
+            myObj[""] = "empty string";
+            
+            console.log(myObj);
+        </script>
+    </head>
+    <body>
+        <button onclick="test();">Go!</button>
+    </body>
+</html>
