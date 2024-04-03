@@ -1,0 +1,104 @@
+<html>
+    <head>
+        <script>
+            const 
+                POST = 'POST', 
+                GET = 'GET';
+
+            class Form {
+                
+                fieldsets = new Array();
+
+                constructor(name, method) {
+                    this.name = name;
+                    this.method = method;
+
+                    return this;
+                }
+
+                add(fieldset) {
+                    this.fieldsets.push(fieldset);
+
+                    return this;
+                }
+
+                emit() {
+                    document.writeln("<form name='"+this.name+"' id='"+this.name+"' method='"+this.method+"'>");
+                        /* composition navigation */
+                        this.fieldsets.map(f => f.emit());
+                    document.writeln("</form>");
+
+                    return this;
+                }
+
+            }
+
+            class Fieldset {
+
+                elements = new Array();
+
+                constructor(label) {
+                    this.label = label;
+
+                    return this;
+                }
+
+                add(element) {
+                    
+                    this.elements.push(element);
+
+                    return this;
+                }
+
+                emit() {
+                    document.writeln("<fieldset>");
+                    document.writeln("<legend>"+this.label+"</legend>");
+                        /* composition navigation */
+                        this.elements.map(e => e.emit());
+                    document.writeln("</fieldset>");
+
+                    return this;
+                }
+            }
+
+            class Element {
+                constructor(name) {
+                    this.name = name;
+                }
+            }
+
+            class Text extends Element {
+                constructor(name, label) {
+                    super(name);
+                    this.label = label;
+
+                    return this;
+                }
+
+                emit() {
+                    document.writeln("<label for='"+this.name+"'>"+this.label+"</label>");
+                    document.writeln("<input type='text' name='"+this.name+"'>");
+                    
+                    return this;
+                }
+            }
+
+            var f = 
+                (new Form('dataentry', POST))
+                    .add(
+                        new Fieldset('biographic data')
+                            .add(new Text('name', 'Name'))
+                            .add(new Text('surname', 'Family Name'))
+                    ).emit();
+
+
+
+        </script>
+    </head>
+    <body>
+
+
+
+
+    </body>
+</html>
