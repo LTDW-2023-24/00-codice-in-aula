@@ -1,6 +1,5 @@
 <?php
 
-echo "QUI";
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -38,31 +37,35 @@ class Entity extends namedElement {
         return $this;
     }
     
-    
+    public function get_primary_key() {
+
+        return $this->ownedFeatures[array_key_first($this->ownedFeatures)];
+    }
+
     public function emit_create() {
         
         $result = "";
         $result .= "CREATE TABLE {$this->name} (";
-        /*
+        
         
         foreach($this->ownedFeatures as $name => $attribute) {
             $result .= $attribute->emit_create().", ";
         }
 
         // $result = substr($result, 0, -2);
-
-        $result .= " PRIMARY KEY()"
+        
+        $result .= " PRIMARY KEY({$this->get_primary_key()->name})";
         $result .= ")";
 
         return $result;
 
-        */
+        
     }
 
     
 }
 
-echo "QUI 66666";
+
 
 
 
@@ -70,8 +73,6 @@ echo "QUI 66666";
 abstract class Feature extends namedElement {
 
 }
-
-
 
 class Attribute extends Feature {
     private 
@@ -86,7 +87,6 @@ class Attribute extends Feature {
         return $this;
     } 
 
-
     public function emit_create() {
 
         $result = "{$this->name} {$this->type}";
@@ -99,8 +99,44 @@ class Attribute extends Feature {
 
 }
 
+class Reference extends Feature {
+    private
+        $entity;
+    
+        public function __construct($name, $entity) {
+            $this->name = $name;
+            $this->entity = $entity;
 
+            return $this;
+        }
 
-echo " qui 3";
+        public function emit_create() {
+
+            $result = "{$this->name} ";
+
+            $type = $this->entity->get_primary_key()->type;
+
+            $result .= $type;
+            if ($type == VARCHAR) {
+                $result .= "({$this->entity->get_primary_key()->length})";
+            }
+
+            return $result;
+        }
+
+}
+
+$group = (new Entity("group"))
+    ->add(new Attribute("id", INT))
+    ->add(new Attribute("name", VARCHAR, 50))
+    ->add(new Attribute("description", TEXT));
+
+$user = (new Entity("user"))
+    ->add(new Attribute('id',INT))
+    ->add(new Attribute('name', VARCHAR, 50))
+    ->add(new Attribute('surname', VARCHAR, 100));
+
+echo $group->emit_create();
+
 
 ?>
