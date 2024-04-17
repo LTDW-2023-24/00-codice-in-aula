@@ -1,6 +1,5 @@
 <?php
 
-echo "QUI";
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -10,8 +9,6 @@ DEFINE("INT","INT");
 DEFINE("VARCHAR","VARCHAR");
 DEFINE("BOOL","BOOL");
 DEFINE("TEXT","TEXT");
-
-
 
 abstract class namedElement {
     protected $name;
@@ -25,27 +22,36 @@ abstract class namedElement {
 class Entity extends namedElement {
 
     private $ownedFeatures = array();
-    
+
     public function __construct($name) {
         $this->name = $name;
 
         return $this;
     }
-    
+
     public function add($feature) {
 
         $this->ownedFeatures[$feature->name] = $feature;
+
         return $this;
     }
-    
-    
+
+    public function get_primary_key() {
+
+        foreach($this->ownedFeatures as $attribute) {
+            if ($attribute->is_primary_key()) {
+                return $attribute;
+            }
+        }
+
+    }
+ 
     public function emit_create() {
-        
+
         $result = "";
         $result .= "CREATE TABLE {$this->name} (";
-        /*
         
-        foreach($this->ownedFeatures as $name => $attribute) {
+        foreach($this->ownedFeatures as $attribute) {
             $result .= $attribute->emit_create().", ";
         }
 
@@ -55,23 +61,12 @@ class Entity extends namedElement {
         $result .= ")";
 
         return $result;
-
-        */
     }
-
-    
 }
-
-echo "QUI 66666";
-
-
-
 
 abstract class Feature extends namedElement {
 
 }
-
-
 
 class Attribute extends Feature {
     private 
@@ -99,8 +94,9 @@ class Attribute extends Feature {
 
 }
 
-
-
-echo " qui 3";
+$user = (new Entity("user"))
+    ->add(new Attribute("id", INT))
+    ->add(new Attribute("name", VARCHAR, 100))
+    ->add(new Attribute("surname", VARCHAR, 100));
 
 ?>
