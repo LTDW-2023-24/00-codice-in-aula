@@ -20,20 +20,70 @@ abstract class namedElement {
     }
 }
 
+class Schema extends namedElement {
+
+    private
+        $ownedEntities = array();
+
+    public function __construct($name) {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function add($entity) {
+        $entity->set_parent($this);
+        $this->ownedEntities[$entity->name] = $entity;
+        
+        return $this;
+    } 
+
+    public function get_entity_by_name($entity_name) {
+        return $this->ownedEntities[$entity_name];
+    }
+
+    public function emit_create() {
+
+        $result = "--\n-- Generated on ".date('d.m.Y H:i')."\n--\n--\n\n";
+
+        foreach($this->ownedEntities as $entity){
+
+            $result .= "-- TABLE {$entity->name} \n ";
+            $result .= $entity->emit_create()."\n\n";
+
+        }
+
+        return $result;
+    }
+
+}
 
 class Entity extends namedElement {
-
-    private $ownedFeatures = array();
+    private 
+        $ownedFeatures = array(),
+        $parent = null;
     
     public function __construct($name) {
         $this->name = $name;
 
         return $this;
     }
+
+    public function get_parent() {
+        return $this->parent;
+    }
+
+    public function set_parent($parent) {
+        $this->parent = $parent;
+
+        return $this; 
+    }
     
     public function add($feature) {
 
+        $feature->set_parent($this);
         $this->ownedFeatures[$feature->name] = $feature;
+        
         return $this;
     }
     
@@ -71,13 +121,26 @@ class Entity extends namedElement {
 
 
 abstract class Feature extends namedElement {
+    protected 
+        $type,
+        $length,
+        $parent = null;
+    
+    public function get_parent() {
+        return $this->parent;
+    }
+
+    public function set_parent($parent) {
+        $this->parent = $parent;
+
+        return $this; 
+    }
+
+    
 
 }
 
 class Attribute extends Feature {
-    private 
-        $type,
-        $length;
 
     public function __construct($name, $type, $length = 0) {
         $this->name = $name;
@@ -101,20 +164,36 @@ class Attribute extends Feature {
 
 class Reference extends Feature {
     private
-        $entity;
+        $entity = null,
+        $entity_name;
     
-        public function __construct($name, $entity) {
+        public function __construct($name, $entity_name) {
+            
             $this->name = $name;
-            $this->entity = $entity;
+            $this->entity_name = $entity_name;
 
             return $this;
         }
 
+        public function entity_is_null() {
+            return ($this->entity == null);
+        }
+
+        public function set_entity($entity) {
+            $this->entity = $entity;
+        }
+
+        public function get_entity_name() {
+            return $this->entity_name;
+        }
+
         public function emit_create() {
+
+            $this->entity = $this->get_parent()->get_parent()->get_entity_by_name($this->entity_name);
 
             $result = "{$this->name} ";
 
-            $type = $this->entity->get_primary_key()->type;
+            $type = ($this->entity->get_primary_key())->type;
 
             $result .= $type;
             if ($type == VARCHAR) {
@@ -126,17 +205,21 @@ class Reference extends Feature {
 
 }
 
-$group = (new Entity("group"))
-    ->add(new Attribute("id", INT))
-    ->add(new Attribute("name", VARCHAR, 50))
-    ->add(new Attribute("description", TEXT));
+Header("Content-type: text/plain");
 
-$user = (new Entity("user"))
-    ->add(new Attribute('id',INT))
-    ->add(new Attribute('name', VARCHAR, 50))
-    ->add(new Attribute('surname', VARCHAR, 100));
+$schema = (new Schema("data_model")) 
+    ->add((new Entity("group"))
+        ->add(new Attribute("id", VARCHAR, 1000))
+        ->add(new Attribute("name", VARCHAR, 50))
+        ->add(new Attribute("description", TEXT))
+    )
+    ->add((new Entity("user"))
+        ->add(new Attribute('id',INT))
+        ->add(new Attribute('name', VARCHAR, 50))
+        ->add(new Attribute('surname', VARCHAR, 100))
+        ->add(new Reference('group', 'group'))
+);
 
-echo $group->emit_create();
-
+echo $schema->emit_create();
 
 ?>
