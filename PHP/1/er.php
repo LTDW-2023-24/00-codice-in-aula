@@ -23,12 +23,90 @@ abstract class namedElement {
 class Schema extends namedElement {
 
     private
-        $ownedEntities = array();
+        $debug = false,
+        $ownedEntities = array(),
+        $tables = array(),
+        $connection,
+        $result,
+        $db_host,
+        $db_username,
+        $db_passwd;
 
-    public function __construct($name) {
+
+    public function __construct($name, $host, $username, $passwd) {
         $this->name = $name;
+        $this->db_host = $host;
+        $this->db_username = $username;
+        $this->db_passwd = $passwd;
+
+        $this->set_connection($host, $username, $passwd, $name);
+
+        $result = $this->connection->query("SHOW TABLES");
+
+        if (!$result) {
+            die("Query error ".$this->connection->error);
+        }
+
+        if ($result->num_rows > 0) {
+            while ($data = $result->fetch_array()) {
+                $this->tables[$data[0]] = true;
+            }
+        }
 
         return $this;
+    }
+
+    public function debug() {
+        $this->debug = true;
+
+        return $this;
+    }
+
+    private function set_connection($host, $username, $passwd, $name) {
+
+        $this->connection = new mysqli($host, $username, $passwd, $name);
+        if ($this->connection->connect_error) {
+            die("Connection error: ".$this->connection->connect_error);
+        }   
+
+    }
+
+    public function exist_table($table) {
+        return isset($this->tables[$table]);
+    }
+
+    public function get_connection() {
+        return $this->connection;
+    }
+
+    public function query($query) {
+
+            $this->result = $this->connection->query($query);
+
+            if(!$this->result) {
+                if ($this->debug) {
+                    echo $query, "<br><br>";
+                    die("Query error ".$this->connection->error);
+                }
+                
+            }
+
+            return $this;
+
+    }
+
+    public function get_result() {
+
+        $result = array();
+
+        if ($this->result->num_rows > 0) {
+            while($data = $this->result->fetch_assoc()) {
+                $result[] = $data;
+            }
+        }
+
+        return $result;
+
     }
 
     public function add($entity) {
@@ -40,6 +118,16 @@ class Schema extends namedElement {
 
     public function get_entity_by_name($entity_name) {
         return $this->ownedEntities[$entity_name];
+    }
+
+    public function commit() {
+
+        foreach($this->ownedEntities as $entity) {
+            $entity->commit();
+        }
+
+        return $this;
+
     }
 
     public function emit_create() {
@@ -92,10 +180,22 @@ class Entity extends namedElement {
         return $this->ownedFeatures[array_key_first($this->ownedFeatures)];
     }
 
+    public function commit() {
+
+        
+        if (!$this->get_parent()->exist_table($this->name)) {
+            $this->get_parent()->query($this->emit_create());
+            
+        }
+
+        return $this;
+
+    }
+
     public function emit_create() {
         
         $result = "";
-        $result .= "CREATE TABLE {$this->name} (";
+        $result .= "CREATE TABLE `{$this->name}` (";
         
         
         foreach($this->ownedFeatures as $name => $attribute) {
@@ -152,7 +252,7 @@ class Attribute extends Feature {
 
     public function emit_create() {
 
-        $result = "{$this->name} {$this->type}";
+        $result = "`{$this->name}` {$this->type}";
         if ($this->type == VARCHAR) {
             $result .= "({$this->length})";
         }
@@ -191,7 +291,7 @@ class Reference extends Feature {
 
             $this->entity = $this->get_parent()->get_parent()->get_entity_by_name($this->entity_name);
 
-            $result = "{$this->name} ";
+            $result = "`{$this->name}` ";
 
             $type = ($this->entity->get_primary_key())->type;
 
@@ -205,21 +305,21 @@ class Reference extends Feature {
 
 }
 
-Header("Content-type: text/plain");
 
-$schema = (new Schema("data_model")) 
-    ->add((new Entity("group"))
-        ->add(new Attribute("id", VARCHAR, 1000))
-        ->add(new Attribute("name", VARCHAR, 50))
-        ->add(new Attribute("description", TEXT))
+$schema = (new Schema("tdw_1", "localhost", "root", "root"))
+    ->debug()
+    ->add((new Entity("content"))
+        ->add(new Attribute("id", INT))
+        ->add(new Attribute("title", VARCHAR, 100))
+        ->add(new Attribute("subtitle", VARCHAR, 100))
+        ->add(new Attribute("slogan", VARCHAR, 100))
+        ->add(new Attribute("b_text", VARCHAR, 20))
+        ->add(new Attribute("b_link", VARCHAR, 100))
+        ->add(new Attribute("image", VARCHAR, 255))
+        ->add(new Attribute("body", TEXT))
     )
-    ->add((new Entity("user"))
-        ->add(new Attribute('id',INT))
-        ->add(new Attribute('name', VARCHAR, 50))
-        ->add(new Attribute('surname', VARCHAR, 100))
-        ->add(new Reference('group', 'group'))
-);
+    ->commit();
 
-echo $schema->emit_create();
+
 
 ?>
